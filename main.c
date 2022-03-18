@@ -6,7 +6,8 @@
 #include "processor.h"
 #include <locale.h>
 
-void clear(){
+void clear()
+{
     system("cls || clear");
 }
 
@@ -20,6 +21,7 @@ void menu(int teamsCount)
     // Variáveis de controle
     int selectedOption;
     int hasTeams = 0;
+    int exportOption;
 
 menu:
     hr(3);
@@ -37,7 +39,8 @@ menu:
     printf("\n");
 
     clear();
-    
+
+    //Roteamento
     switch (selectedOption)
     {
     case 1:
@@ -115,7 +118,7 @@ registerTeams:
     }
 
     hasTeams = 1;
-    
+
     clear();
     goto menu;
 
@@ -143,7 +146,7 @@ showTeams:
     {
         printf("Nenhuma equipe cadastrada! \n");
     }
-    
+
     system("pause");
     clear();
 
@@ -156,36 +159,110 @@ printToFile:
 
     if (hasTeams)
     {
+        printf("Digite o número correspondente ao formato desejado.");
+        printf("\n[1] - Arquivo de texto comum (.txt)");
+        printf("\n[2] - Arquivo de Excel (.csv)");
+        printf("\n[3] - Arquivo JSON (.json)");
+        printf("\n-> ");
+        scanf("%i", &selectedOption );
+
         FILE *file;
-        file = fopen("resultados.txt", "w");
 
-        if (file == NULL)
+        switch(selectedOption)
         {
-            printf("Erro ao abrir arquivo! \n");
-            goto menu;
-        }
-        for (int i = 0; i < teamsCount; i++)
-        {
-            fprintf(file, "==================================\n");
-            fprintf(file, "**** %i LUGAR****\n", i + 1);
-            fprintf(file, "EQUIPE..........%s \n", teams[i].name);
-            fprintf(file, "1º TEMPO.........");
-            fprintf(file, "%i:%i:%i \n", teams[i].minutes[0], teams[i].seconds[0], teams[i].miliseconds[0]);
-            fprintf(file, "2º TEMPO.........");
-            fprintf(file, "%i:%i:%i \n", teams[i].minutes[1], teams[i].seconds[1], teams[i].miliseconds[1]);
-            fprintf(file, "3º TEMPO.........");
-            fprintf(file, "%i:%i:%i \n", teams[i].minutes[2], teams[i].seconds[2], teams[i].miliseconds[2]);
-            fprintf(file, "MÉDIA............%.2f \n", teams[i].mean);
-        }
+        case 1:
+            //Exportando para arquivo de texto
+            file = fopen("resultados.txt", "w");
 
-        fclose(file);
-        printf(BLU "Resultados salvos em resultados.txt \n" RESET);
+            if (file == NULL)
+            {
+                printf("Erro ao exportar arquivo! \n");
+                goto menu;
+            }
+            for (int i = 0; i < teamsCount; i++)
+            {
+                fprintf(file, "==================================\n");
+                fprintf(file, "**** %i LUGAR****\n", i + 1);
+                fprintf(file, "EQUIPE..........%s \n", teams[i].name);
+                fprintf(file, "1º TEMPO.........");
+                fprintf(file, "%i:%i:%i \n", teams[i].minutes[0], teams[i].seconds[0], teams[i].miliseconds[0]);
+                fprintf(file, "2º TEMPO.........");
+                fprintf(file, "%i:%i:%i \n", teams[i].minutes[1], teams[i].seconds[1], teams[i].miliseconds[1]);
+                fprintf(file, "3º TEMPO.........");
+                fprintf(file, "%i:%i:%i \n", teams[i].minutes[2], teams[i].seconds[2], teams[i].miliseconds[2]);
+                fprintf(file, "MÉDIA............%.2f \n", teams[i].mean);
+            }
+            break;
+        case 2:
+            //Exportando para CSV
+            file = fopen("resultados.csv", "w");
+
+            if (file == NULL)
+            {
+                printf("Erro ao exportar arquivo! \n");
+                goto menu;
+            }
+
+            fprintf(file, "Posicao, Equipe, 1o Tempo - min, 1o Tempo - seg, 1o Tempo - mil, 2o Tempo - min, 2o Tempo - seg, 2o Tempo - mil, 3o Tempo - min, 3o Tempo - seg, 3o Tempo - mil, Media\n");
+            for (int i = 0; i < teamsCount; i++)
+            {
+                fprintf(file, "%i, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %.2f\n", i+1, teams[i].name, teams[i].minutes[0], teams[i].seconds[0], teams[i].miliseconds[0], teams[i].minutes[1], teams[i].seconds[1], teams[i].miliseconds[1], teams[i].minutes[2], teams[i].seconds[2], teams[i].miliseconds[2], teams[i].mean);
+            }
+
+            fclose(file);
+            printf(BLU "Resultados exportados com sucesso! \n" RESET);
+            break;
+
+        case 3:
+            //Exportando para JSON
+            file = fopen("resultados.json", "w");
+
+            if (file == NULL)
+            {
+                printf("Erro ao exportar arquivo! \n");
+                goto menu;
+            }
+
+            fprintf(file, "[ \n");
+            for (int i = 0; i < teamsCount; i++)
+            {
+                fprintf(file, "{ \n");
+                fprintf(file, "\t\"position\": %i, \n", i + 1);
+                fprintf(file, "\t\"name\": \"%s\", \n", teams[i].name);
+                fprintf(file, "\t\"minutes\": [");
+                fprintf(file, "%i, ", teams[i].minutes[0]);
+                fprintf(file, "%i, ", teams[i].minutes[1]);
+                fprintf(file, "%i", teams[i].minutes[2]);
+                fprintf(file, "],\n");
+                fprintf(file, "\t\"seconds\": [");
+                fprintf(file, "%i, ", teams[i].seconds[0]);
+                fprintf(file, "%i, ", teams[i].seconds[1]);
+                fprintf(file, "%i", teams[i].seconds[2]);
+                fprintf(file, "],\n");
+                fprintf(file, "\t\"miliseconds\": [");
+                fprintf(file, "%i, ", teams[i].miliseconds[0]);
+                fprintf(file, "%i, ", teams[i].miliseconds[1]);
+                fprintf(file, "%i", teams[i].miliseconds[2]);
+                fprintf(file, "],\n");
+                fprintf(file, "\t\"timeMean\": \"%.2f\" \n", teams[i].mean);
+                fprintf(file, "}");
+                if (i + 1 < teamsCount){
+                    fprintf(file, ",\n");
+                }
+            }
+            fprintf(file, "] \n");
+
+            fclose(file);
+            printf(BLU "Resultados exportados com sucesso! \n" RESET);
+
+            break;
+        }
     }
     else
     {
         printf("Nenhuma equipe cadastrada! \n");
     }
-    
+
     system("pause");
     clear();
 
@@ -205,7 +282,7 @@ int main()
     printf("Bem-vindo, antes de começar, digite a quantidade de equipes inscritas. \n");
     printf("-> ");
     scanf("%i", &teamsCount);
-    
+
     clear();
     menu(teamsCount);
 
