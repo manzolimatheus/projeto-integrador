@@ -1,9 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "colors.h"
 #include "styles.h"
 #include "processor.h"
 #include <locale.h>
+
+void clear(){
+    system("cls || clear");
+}
 
 void menu(int teamsCount)
 {
@@ -31,6 +36,8 @@ menu:
     scanf("%i", &selectedOption);
     printf("\n");
 
+    clear();
+    
     switch (selectedOption)
     {
     case 1:
@@ -108,6 +115,8 @@ registerTeams:
     }
 
     hasTeams = 1;
+    
+    clear();
     goto menu;
 
 showTeams:
@@ -134,6 +143,9 @@ showTeams:
     {
         printf("Nenhuma equipe cadastrada! \n");
     }
+    
+    system("pause");
+    clear();
 
     goto menu;
 
@@ -173,6 +185,9 @@ printToFile:
     {
         printf("Nenhuma equipe cadastrada! \n");
     }
+    
+    system("pause");
+    clear();
 
     goto menu;
 
@@ -190,7 +205,8 @@ int main()
     printf("Bem-vindo, antes de começar, digite a quantidade de equipes inscritas. \n");
     printf("-> ");
     scanf("%i", &teamsCount);
-
+    
+    clear();
     menu(teamsCount);
 
     return 0;
