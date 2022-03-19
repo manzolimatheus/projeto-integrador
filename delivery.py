@@ -17,4 +17,4 @@ with open('resultados.json') as json_file:
 for x in range(len(data)):
     payload = dumps( {"name": data[x]["name"], "minutes": data[x]["minutes"], "seconds": data[x]["seconds"], "miliseconds": data[x]["miliseconds"], "mean": data[x]["timeMean"].replace(",","."), "position": data[x]["position"]} )
     response = request("POST", url, data=payload, headers=headers)
-    print(f"Registro {x} exportado para web com sucesso!" if response.status_code == 201 else "Registro {x} obteve falha ao ser exportado para web!")
+    print(f"Registro {x + 1} exportado para web com sucesso!" if response.status_code == 201 else "Registro {x + 1} obteve falha ao ser exportado para web!")
