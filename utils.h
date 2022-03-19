@@ -1,3 +1,6 @@
+#ifndef utils_h
+#define utils_h
+
 struct Team
 {
     char name[20];
@@ -39,7 +42,13 @@ float resolveTime(struct Team team)
 // Função que limpa a tela
 void clear()
 {
-    system("cls || clear");
+    // Check the user system
+    #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+        system("clear");
+    #else
+        system("cls");
+    #endif
+
 }
 
 void printToText(FILE *file, struct Team teams[], int teamsCount)
@@ -102,3 +111,15 @@ void printToJSON(FILE *file, struct Team teams[], int teamsCount)
 
     fclose(file);
 }
+
+void pause(){
+    // Check the user system
+
+    #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+        system("read -p \"Pressione qualquer tecla para continuar...\"");
+    #else
+        system("pause");
+    #endif
+}
+
+#endif
