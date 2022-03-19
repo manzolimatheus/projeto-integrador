@@ -3,13 +3,8 @@
 #include <string.h>
 #include "colors.h"
 #include "styles.h"
-#include "processor.h"
+#include "utils.h"
 #include <locale.h>
-
-void clear()
-{
-    system("cls || clear");
-}
 
 void menu(int teamsCount)
 {
@@ -40,7 +35,7 @@ menu:
 
     clear();
 
-    //Roteamento
+    // Roteamento
     switch (selectedOption)
     {
     case 1:
@@ -164,57 +159,35 @@ printToFile:
         printf("\n[2] - Arquivo de Excel (.csv)");
         printf("\n[3] - Arquivo JSON (.json)");
         printf("\n-> ");
-        scanf("%i", &selectedOption );
+        scanf("%i", &selectedOption);
 
         FILE *file;
 
-        switch(selectedOption)
+        switch (selectedOption)
         {
         case 1:
-            //Exportando para arquivo de texto
+            // Exportando para arquivo de texto
             file = fopen("resultados.txt", "w");
-
             if (file == NULL)
             {
                 printf("Erro ao exportar arquivo! \n");
                 goto menu;
             }
-            for (int i = 0; i < teamsCount; i++)
-            {
-                fprintf(file, "==================================\n");
-                fprintf(file, "**** %i LUGAR****\n", i + 1);
-                fprintf(file, "EQUIPE..........%s \n", teams[i].name);
-                fprintf(file, "1º TEMPO.........");
-                fprintf(file, "%i:%i:%i \n", teams[i].minutes[0], teams[i].seconds[0], teams[i].miliseconds[0]);
-                fprintf(file, "2º TEMPO.........");
-                fprintf(file, "%i:%i:%i \n", teams[i].minutes[1], teams[i].seconds[1], teams[i].miliseconds[1]);
-                fprintf(file, "3º TEMPO.........");
-                fprintf(file, "%i:%i:%i \n", teams[i].minutes[2], teams[i].seconds[2], teams[i].miliseconds[2]);
-                fprintf(file, "MÉDIA............%.2f \n", teams[i].mean);
-            }
+            printToText(file, teams, teamsCount);
             break;
         case 2:
-            //Exportando para CSV
+            // Exportando para CSV
             file = fopen("resultados.csv", "w");
-
             if (file == NULL)
             {
                 printf("Erro ao exportar arquivo! \n");
                 goto menu;
             }
-
-            fprintf(file, "Posicao, Equipe, 1o Tempo - min, 1o Tempo - seg, 1o Tempo - mil, 2o Tempo - min, 2o Tempo - seg, 2o Tempo - mil, 3o Tempo - min, 3o Tempo - seg, 3o Tempo - mil, Media\n");
-            for (int i = 0; i < teamsCount; i++)
-            {
-                fprintf(file, "%i, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %.2f\n", i+1, teams[i].name, teams[i].minutes[0], teams[i].seconds[0], teams[i].miliseconds[0], teams[i].minutes[1], teams[i].seconds[1], teams[i].miliseconds[1], teams[i].minutes[2], teams[i].seconds[2], teams[i].miliseconds[2], teams[i].mean);
-            }
-
-            fclose(file);
-            printf(BLU "Resultados exportados com sucesso! \n" RESET);
+            printToCSV(file, teams, teamsCount);
             break;
 
         case 3:
-            //Exportando para JSON
+            // Exportando para JSON
             file = fopen("resultados.json", "w");
 
             if (file == NULL)
@@ -222,41 +195,20 @@ printToFile:
                 printf("Erro ao exportar arquivo! \n");
                 goto menu;
             }
-
-            fprintf(file, "[ \n");
-            for (int i = 0; i < teamsCount; i++)
+            printToJSON(file, teams, teamsCount);
+            break;
+        default:
+            // Exportando para arquivo de texto
+            file = fopen("resultados.txt", "w");
+            if (file == NULL)
             {
-                fprintf(file, "{ \n");
-                fprintf(file, "\t\"position\": %i, \n", i + 1);
-                fprintf(file, "\t\"name\": \"%s\", \n", teams[i].name);
-                fprintf(file, "\t\"minutes\": [");
-                fprintf(file, "%i, ", teams[i].minutes[0]);
-                fprintf(file, "%i, ", teams[i].minutes[1]);
-                fprintf(file, "%i", teams[i].minutes[2]);
-                fprintf(file, "],\n");
-                fprintf(file, "\t\"seconds\": [");
-                fprintf(file, "%i, ", teams[i].seconds[0]);
-                fprintf(file, "%i, ", teams[i].seconds[1]);
-                fprintf(file, "%i", teams[i].seconds[2]);
-                fprintf(file, "],\n");
-                fprintf(file, "\t\"miliseconds\": [");
-                fprintf(file, "%i, ", teams[i].miliseconds[0]);
-                fprintf(file, "%i, ", teams[i].miliseconds[1]);
-                fprintf(file, "%i", teams[i].miliseconds[2]);
-                fprintf(file, "],\n");
-                fprintf(file, "\t\"timeMean\": \"%.2f\" \n", teams[i].mean);
-                fprintf(file, "}");
-                if (i + 1 < teamsCount){
-                    fprintf(file, ",\n");
-                }
+                printf("Erro ao exportar arquivo! \n");
+                goto menu;
             }
-            fprintf(file, "] \n");
-
-            fclose(file);
-            printf(BLU "Resultados exportados com sucesso! \n" RESET);
-
+            printToText(file, teams, teamsCount);
             break;
         }
+        printf(BLU "Resultados exportados com sucesso! \n" RESET);
     }
     else
     {
