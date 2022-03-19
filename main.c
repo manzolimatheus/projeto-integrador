@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "colors.h"
 #include "styles.h"
 #include "utils.h"
 #include <locale.h>
@@ -22,12 +21,13 @@ menu:
     hr(3);
     printf("MENU \n");
     hr(3);
-    printf("Escolha sua opção \n");
+    printf("Escolha sua opcao \n");
     hr(1);
     printf(GRN "[1]" RESET " - Cadastrar equipes \n");
     printf(GRN "[2]" RESET " - Visualizar equipes \n");
     printf(GRN "[3]" RESET " - Imprimir resultados \n");
-    printf(GRN "[4]" RESET " - " RED "Sair \n" RESET);
+    printf(GRN "[4]" RESET " - Salvar resultados na WEB \n");
+    printf(GRN "[5]" RESET " - " RED "Sair \n" RESET);
     hr(1);
     printf("-> ");
     scanf("%i", &selectedOption);
@@ -39,24 +39,28 @@ menu:
     switch (selectedOption)
     {
     case 1:
-        printf(BLU "OPÇÃO ESCOLHIDA: Cadastrar equipes \n" RESET);
+        printf(BLU "OPCAO ESCOLHIDA: Cadastrar equipes \n" RESET);
         goto registerTeams;
         break;
     case 2:
-        printf(BLU "OPÇÃO ESCOLHIDA: Visualizar equipes \n" RESET);
+        printf(BLU "OPCAO ESCOLHIDA: Visualizar equipes \n" RESET);
         goto showTeams;
         break;
     case 3:
-        printf(BLU "OPÇÃO ESCOLHIDA: Imprimir resultados \n" RESET);
+        printf(BLU "OPCAO ESCOLHIDA: Imprimir resultados \n" RESET);
         goto printToFile;
         break;
     case 4:
-        printf(BLU "OPÇÃO ESCOLHIDA: Sair \n" RESET);
+        printf(BLU "OPCAO ESCOLHIDA: Salvar resultados na WEB \n" RESET);
+        goto exportToWeb;
+        break;
+    case 5:
+        printf(BLU "OPCAO ESCOLHIDA: Sair \n" RESET);
         goto exitProgram;
         break;
 
     default:
-        printf(RED "Opção inválida! \n" RESET);
+        printf(RED "Opcao invalida! \n" RESET);
         goto menu;
         break;
     }
@@ -79,18 +83,18 @@ registerTeams:
 
         for (int j = 0; j < 3; j++)
         {
-            printf(BLU "Digite o %iº melhor tempo da equipe: \n" RESET, j + 1);
-            printf("-> Minutos do %iº Tempo : " GRN, j + 1);
+            printf(BLU "Digite o %io melhor tempo da equipe: \n" RESET, j + 1);
+            printf("-> Minutos do %io Tempo : " GRN, j + 1);
             scanf("%i", &tempStorage);
             printf(RESET);
             teams[index].minutes[j] = tempStorage;
 
-            printf("-> Segundos do %iº Tempo : " GRN, j + 1);
+            printf("-> Segundos do %io Tempo : " GRN, j + 1);
             scanf("%i", &tempStorage);
             printf(RESET);
             teams[index].seconds[j] = tempStorage;
 
-            printf("-> Milisegundos do %iº Tempo : " GRN, j + 1);
+            printf("-> Milisegundos do %io Tempo : " GRN, j + 1);
             scanf("%i", &tempStorage);
             printf(RESET);
             teams[index].miliseconds[j] = tempStorage;
@@ -128,12 +132,12 @@ showTeams:
     {
         for (int i = 0; i < teamsCount; i++)
         {
-            printf(YEL "****%i LUGAR*****\n" RESET, i + 1);
+            printf(YEL "****%io LUGAR*****\n" RESET, i + 1);
             printf(GRN "EQUIPE..........." RESET "%s \n", teams[i].name);
-            printf(GRN "1º TEMPO........." RESET "%i:%i:%i \n", teams[i].minutes[0], teams[i].seconds[0], teams[i].miliseconds[0]);
-            printf(GRN "2º TEMPO........." RESET "%i:%i:%i \n", teams[i].minutes[1], teams[i].seconds[1], teams[i].miliseconds[1]);
-            printf(GRN "3º TEMPO........." RESET "%i:%i:%i \n", teams[i].minutes[2], teams[i].seconds[2], teams[i].miliseconds[2]);
-            printf(GRN "MÉDIA............" RESET "%.2f \n", teams[i].mean);
+            printf(GRN "1o TEMPO........." RESET "%i:%i:%i \n", teams[i].minutes[0], teams[i].seconds[0], teams[i].miliseconds[0]);
+            printf(GRN "2o TEMPO........." RESET "%i:%i:%i \n", teams[i].minutes[1], teams[i].seconds[1], teams[i].miliseconds[1]);
+            printf(GRN "3o TEMPO........." RESET "%i:%i:%i \n", teams[i].minutes[2], teams[i].seconds[2], teams[i].miliseconds[2]);
+            printf(GRN "MEDIA............" RESET "%.2f \n", teams[i].mean);
             printf(GRN "==================================\n" RESET);
         }
     }
@@ -142,7 +146,7 @@ showTeams:
         printf("Nenhuma equipe cadastrada! \n");
     }
 
-    system("pause");
+    pause();
     clear();
 
     goto menu;
@@ -154,7 +158,7 @@ printToFile:
 
     if (hasTeams)
     {
-        printf("Digite o número correspondente ao formato desejado.");
+        printf("Digite o numero correspondente ao formato desejado. (A insercao de um valor invalido voltara para o menu principal)");
         printf("\n[1] - Arquivo de texto comum (.txt)");
         printf("\n[2] - Arquivo de Excel (.csv)");
         printf("\n[3] - Arquivo JSON (.json)");
@@ -198,14 +202,10 @@ printToFile:
             printToJSON(file, teams, teamsCount);
             break;
         default:
-            // Exportando para arquivo de texto
-            file = fopen("resultados.txt", "w");
-            if (file == NULL)
-            {
-                printf("Erro ao exportar arquivo! \n");
-                goto menu;
-            }
-            printToText(file, teams, teamsCount);
+            printf("Opcaoo invalida! Voltando ao menu... \n");
+            pause();
+            clear();
+            goto menu;
             break;
         }
         printf(BLU "Resultados exportados com sucesso! \n" RESET);
@@ -215,7 +215,43 @@ printToFile:
         printf("Nenhuma equipe cadastrada! \n");
     }
 
-    system("pause");
+    pause();
+    clear();
+
+    goto menu;
+
+exportToWeb:
+    hr(3);
+    printf("- SALVAR NA WEB\n");
+    hr(1);
+
+    if (hasTeams)
+    {
+        FILE *file;
+
+        // Exportando para JSON
+        file = fopen("resultados.json", "w");
+
+        if (file == NULL)
+        {
+            printf("Erro ao exportar arquivo! \n");
+            goto menu;
+        }
+        printToJSON(file, teams, teamsCount);
+
+        #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+            system("python3 delivery.py");
+        #else
+            system("python delivery.py");
+        #endif
+        printf(BLU "Resultados salvos na WEB com sucesso! \n" RESET);
+    }
+    else
+    {
+        printf("Nenhuma equipe cadastrada! \n");
+    }
+
+    pause();
     clear();
 
     goto menu;
@@ -231,8 +267,7 @@ int main()
 
     int teamsCount;
 
-    printf("Bem-vindo, antes de começar, digite a quantidade de equipes inscritas. \n");
-    printf("-> ");
+    printf("Bem-vindo, antes de comecar, quantas equipes estao participando da competicao? -> ");
     scanf("%i", &teamsCount);
 
     clear();
