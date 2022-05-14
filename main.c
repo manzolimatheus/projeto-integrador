@@ -3,7 +3,6 @@
 #include <string.h>
 #include "styles.h"
 #include "utils.h"
-#include <locale.h>
 
 // Variáveis brutas
 int teamsCount;
@@ -47,7 +46,7 @@ void exportToWeb()
     }
     else
     {
-        printf("Nenhuma equipe cadastrada ou a corrida ainda não foi finalizada! \n");
+        printf("Nenhuma equipe cadastrada ou a corrida ainda nao foi finalizada! \n");
     }
 
     pause();
@@ -67,6 +66,7 @@ void printToFile()
         printf("\n[1] - Arquivo de texto comum (.txt)");
         printf("\n[2] - Arquivo de Excel (.csv)");
         printf("\n[3] - Arquivo JSON (.json)");
+        printf("\n[4] - Sair");
         printf("\n-> ");
         scanf("%i", &selectedOption);
 
@@ -108,8 +108,6 @@ void printToFile()
             printToJSON(file, teams, teamsCount);
             break;
         default:
-            printf("Opcao invalida! Voltando ao menu... \n");
-            pause();
             clear();
             menu();
             break;
@@ -149,7 +147,7 @@ void showTeams()
     }
     else
     {
-        printf("Nenhuma equipe cadastrada ou a corrida ainda não foi finalizada! \n");
+        printf("Nenhuma equipe cadastrada ou a corrida ainda nao foi finalizada! \n");
     }
 
     pause();
@@ -242,12 +240,20 @@ void selectRace()
     printf(hasTimes[0] ? GRN "[1]" RESET " - Bateria 1 (Concluido)\n" : GRN "[1]" RESET " - Bateria 1 \n");
     printf(hasTimes[1] ? GRN "[2]" RESET " - Bateria 2 (Concluido)\n" : GRN "[2]" RESET " - Bateria 2 \n");
     printf(hasTimes[2] ? GRN "[3]" RESET " - Bateria 3 (Concluido)\n" : GRN "[3]" RESET " - Bateria 3 \n");
+    printf(GRN "[4]" RESET " - Sair\n");
     hr(1);
     printf("Digite o numero correspondente a bateria desejada: -> ");
     scanf("%i", &raceSelected);
 
     clear();
-    registerTeams(raceSelected);
+    if (raceSelected != 4)
+    {
+        registerTeams(raceSelected);
+    }
+    else
+    {
+        menu();
+    }
 }
 
 void router()
@@ -306,10 +312,8 @@ void menu()
 
 int main()
 {
-    // Atribuindo localização ao programa
-    setlocale(LC_ALL, "Portuguese");
     printf("\nCriado por Ambar Labs - 2022");
-    printf("\nAcesse nossa aplicacao web:" BLU "{{link}}\n" RESET);
+    printf("\nAcesse nossa aplicacao web:" BLU "ambar-race.vercel.app\n" RESET);
     hr(2);
     printf("\nBem-vindo, antes de comecar, quantas equipes estao participando da competicao? -> ");
     scanf("%i", &teamsCount);
