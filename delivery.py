@@ -1,6 +1,15 @@
-from requests import request
+import os
 from json import load, dumps
-from dotenv import dotenv_values
+
+try:
+    from requests import request
+    from dotenv import dotenv_values
+except:
+    os.system("pip install requests")
+    os.system("pip install python-dotenv")
+    from requests import request
+    from dotenv import dotenv_values
+
 config = dotenv_values(".env")
 
 url = "https://kartrace-1ea9.restdb.io/rest/teams"
