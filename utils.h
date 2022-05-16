@@ -13,7 +13,7 @@ struct Team
 // Função que faz a média de tempo de cada time
 float getArithmeticMean(int firstTime, int secondTime)
 {
-    int arithmeticMean = (firstTime + secondTime) / 3;
+    int arithmeticMean = (firstTime + secondTime) / 2;
 
     return arithmeticMean;
 }
